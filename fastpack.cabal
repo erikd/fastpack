@@ -35,6 +35,7 @@ library
   hs-source-dirs:    .
 
   exposed-modules:    Data.FastPack
+                      Data.FastPack.Functions
 
 
   build-depends:      base                          >= 4.8         && < 5.0

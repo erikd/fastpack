@@ -74,4 +74,5 @@ benchmark bench
                     , bytestring
                     , cereal                          == 0.5.*
                     , criterion                       == 1.1.*
+                    , fastpack
                     , packer                          == 0.1.*

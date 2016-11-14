@@ -20,9 +20,9 @@ import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Internal as BSI
 
-import           Foreign.Storable (Storable (..))
 import           Foreign.ForeignPtr (withForeignPtr)
 import           Foreign.Ptr (Ptr, castPtr, plusPtr)
+import           Foreign.Storable (Storable (..))
 
 import qualified GHC.Base as GB
 import           GHC.Word (Word8, Word16 (..), Word32 (..), Word64 (..))

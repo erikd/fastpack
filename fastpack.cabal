@@ -73,6 +73,7 @@ benchmark bench
                     , binary                          == 0.8.*
                     , bytestring
                     , cereal                          == 0.5.*
-                    , criterion                       == 1.1.*
+                    -- 1.1.4.0 is busted. See https://github.com/bos/criterion/issues/126
+                    , criterion                       == 1.1.1.0
                     , fastpack
                     , packer                          == 0.1.*

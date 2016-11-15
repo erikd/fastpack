@@ -10,7 +10,7 @@ import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Internal as BSI
 
 import           Data.FastPack
-import qualified Data.FastPack.Functions
+import           Data.FastPack.Functions
 
 import           Foreign.ForeignPtr (withForeignPtr)
 import           Foreign.Ptr (castPtr, plusPtr)
@@ -23,14 +23,17 @@ import           System.IO.Unsafe (unsafeDupablePerformIO)
 
 {-# NOINLINE putBenchWord #-}
 putBenchWord :: BenchWord -> ByteString
-putBenchWord (BenchWord w8 w16 w32 w64) =
+putBenchWord (BenchWord le64 be64 le32 be32 le16 be16 w8a w8b) =
     $(runFastPack
-        [ PackNumVar "w8" PackW8
-        , PackNumVar "w16" (PackW16 LE)
-        , PackNumVar "w32" (PackW32 LE)
-        , PackNumVar "w64" (PackW64 LE)
+        [ PackNumVar "le64" (PackW64 LE)
+        , PackNumVar "be64" (PackW64 BE)
+        , PackNumVar "le32" (PackW32 LE)
+        , PackNumVar "be32" (PackW32 BE)
+        , PackNumVar "le16" (PackW16 LE)
+        , PackNumVar "be16" (PackW16 BE)
+        , PackNumVar "w8a" PackW8
+        , PackNumVar "w8b" PackW8
         ])
-
 
 
 
@@ -41,15 +44,20 @@ putBenchWord (BenchWord w8 w16 w32 w64) =
 {-# NOINLINE getBenchWord #-}
 getBenchWord :: ByteString -> BenchWord
 getBenchWord (BSI.PS fp offset len)
-    | len < 15 = error "FastPack.getBenchWord"
+    | len < benchWordSize = error "FastPack.getBenchWord"
     | otherwise =
         unsafeDupablePerformIO $ withForeignPtr fp $ \ srcptr ->
             let ptr = plusPtr srcptr offset in
             BenchWord
                 <$> peek (castPtr ptr)
-                <*> peek (castPtr (plusPtr ptr 1))
-                <*> peek (castPtr (plusPtr ptr 3))
-                <*> peek (castPtr (plusPtr ptr 7))
+                <*> fmap bswapW64 (peek (castPtr (plusPtr ptr 8)))
+                <*> peek (castPtr (plusPtr ptr 16))
+                <*> fmap bswapW32 (peek (castPtr (plusPtr ptr 20)))
+                <*> peek (castPtr (plusPtr ptr 24))
+                <*> fmap bswapW16 (peek (castPtr (plusPtr ptr 26)))
+                <*> peek (castPtr (plusPtr ptr 28))
+                <*> peek (castPtr (plusPtr ptr 29))
+
 
 {-# NOINLINE sanityBenchWord #-}
 sanityBenchWord :: BenchWord -> BenchWord

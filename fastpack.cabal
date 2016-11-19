@@ -36,6 +36,8 @@ library
 
   exposed-modules:    Data.FastPack
                       Data.FastPack.Functions
+                      Data.FastPack.Put
+                      Data.FastPack.Types
 
 
   build-depends:      base                          >= 4.8         && < 5.0

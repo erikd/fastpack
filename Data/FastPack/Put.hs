@@ -6,6 +6,7 @@ module Data.FastPack.Put
 
 import qualified Data.ByteString.Char8 as BS
 
+import           Data.FastPack.TH
 import           Data.FastPack.Types
 
 import           Data.Either (partitionEithers)
@@ -86,30 +87,3 @@ valueToExp pd =
         PackNumLit i t -> wrapEndian t $ mkLitE i
         PackBsLit bs -> LitE (StringL $ BS.unpack bs)
         PackBsVar s -> mkVarE s
-  where
-    wrapEndian t ex =
-        case t of
-            PackW8 -> ex
-            PackW16 end -> endian end ex "Data.FastPack.Functions.bswapW16"
-            PackW32 end -> endian end ex "Data.FastPack.Functions.bswapW32"
-            PackW64 end -> endian end ex "Data.FastPack.Functions.bswapW64"
-
-    endian end ex n
-        | end == systemEndianness = ex
-        | otherwise = AppE (mkVarE n) ex
-
-
-
-mkVarE :: String -> Exp
-mkVarE = VarE . mkName
-
-mkLitE :: Integer -> Exp
-mkLitE = LitE . IntegerL
-
-
-systemEndianness :: Endian
-#ifdef WORDS_BIGENDIAN
-systemEndianness = BE
-#else
-systemEndianness = LE
-#endif

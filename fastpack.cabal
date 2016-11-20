@@ -37,6 +37,7 @@ library
   exposed-modules:    Data.FastPack
                       Data.FastPack.Functions
                       Data.FastPack.Put
+                      Data.FastPack.TH
                       Data.FastPack.Types
 
 

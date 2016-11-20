@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 
 module Data.FastPack.Put
     ( runFastPack
@@ -43,9 +42,9 @@ packDataSize pds =
             PackW64 {} -> 8
 
     mkSizeExp :: Int -> [Exp] -> Exp
-    mkSizeExp known [] = mkLitE $ fromIntegral known
+    mkSizeExp known [] = mkLitIntE $ fromIntegral known
     mkSizeExp known xs =
-        InfixE (Just . mkLitE $ fromIntegral known) numPlus $ sumExp xs
+        InfixE (Just . mkLitIntE $ fromIntegral known) numPlus $ sumExp xs
 
     sumExp [] = Nothing
     sumExp [x] = Just x
@@ -84,6 +83,19 @@ valueToExp :: PackData -> Exp
 valueToExp pd =
     case pd of
         PackNumVar s t -> wrapEndian t $ mkVarE s
-        PackNumLit i t -> wrapEndian t $ mkLitE i
+        PackNumLit i t -> wrapEndian t $ LitE (IntegerL i)
         PackBsLit bs -> LitE (StringL $ BS.unpack bs)
         PackBsVar s -> mkVarE s
+
+
+wrapEndian :: PackNumType -> Exp -> Exp
+wrapEndian t expr =
+    case t of
+        PackW8 -> expr
+        PackW16 end -> endian end "Data.FastPack.Functions.bswapW16"
+        PackW32 end -> endian end "Data.FastPack.Functions.bswapW32"
+        PackW64 end -> endian end "Data.FastPack.Functions.bswapW64"
+  where
+    endian end fname
+        | end == systemEndianness = expr
+        | otherwise = AppE (mkVarE fname) expr

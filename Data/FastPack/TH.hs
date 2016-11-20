@@ -1,9 +1,13 @@
 {-# LANGUAGE CPP #-}
 
 module Data.FastPack.TH
-    ( mkLitE
+    ( mkConE
+    , mkConP
+    , mkLitIntE
+    , mkLitStrE
     , mkVarE
-    , wrapEndian
+    , mkVarP
+    , systemEndianness
     ) where
 
 import           Data.FastPack.Types
@@ -11,24 +15,24 @@ import           Data.FastPack.Types
 import           Language.Haskell.TH.Syntax
 
 
-wrapEndian :: PackNumType -> Exp -> Exp
-wrapEndian t expr =
-    case t of
-        PackW8 -> expr
-        PackW16 end -> endian end expr "Data.FastPack.Functions.bswapW16"
-        PackW32 end -> endian end expr "Data.FastPack.Functions.bswapW32"
-        PackW64 end -> endian end expr "Data.FastPack.Functions.bswapW64"
-  where
-    endian end ex n
-        | end == systemEndianness = ex
-        | otherwise = AppE (mkVarE n) ex
+mkConE :: String -> Exp
+mkConE = ConE . mkName
 
+mkLitIntE :: Int -> Exp
+mkLitIntE = LitE . IntegerL . fromIntegral
+
+mkLitStrE :: String -> Exp
+mkLitStrE = LitE . StringL
 
 mkVarE :: String -> Exp
 mkVarE = VarE . mkName
 
-mkLitE :: Integer -> Exp
-mkLitE = LitE . IntegerL
+mkConP :: String -> [Pat] -> Pat
+mkConP name = ConP (mkName name)
+
+mkVarP :: String -> Pat
+mkVarP = VarP . mkName
+
 
 systemEndianness :: Endian
 #ifdef WORDS_BIGENDIAN

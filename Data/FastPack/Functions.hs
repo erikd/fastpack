@@ -1,36 +1,55 @@
 {-# LANGUAGE MagicHash #-}
 module Data.FastPack.Functions
     ( module GB
+    , ap
     , bsLength
-    , bsUnsafeCreate
+    , bsInternals
     , bswapW16
     , bswapW32
     , bswapW64
+    , bsUnsafeCreate
+    , castPtr
+    , fmap
+    , left
+    , numLess
     , numPlus
+    , peek
+    , plusPtr
     , pokeAdvanceBS
     , pokeAdvanceW8
     , pokeAdvanceW16
     , pokeAdvanceW32
     , pokeAdvanceW64
+    , right
     , unit
+    , unsafeDupablePerformIO
+    , withForeignPtr
     ) where
 
 
+import           Control.Monad (ap)
 import           Data.ByteString (ByteString)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Internal as BSI
+import           Data.Functor (fmap)
 
-import           Foreign.ForeignPtr (withForeignPtr)
+import           Foreign.ForeignPtr (ForeignPtr, withForeignPtr)
 import           Foreign.Ptr (Ptr, castPtr, plusPtr)
 import           Foreign.Storable (Storable (..))
 
-import qualified GHC.Base as GB
+import qualified GHC.Base as GB hiding (ap, fmap)
 import           GHC.Word (Word8, Word16 (..), Word32 (..), Word64 (..))
+
+import           System.IO.Unsafe (unsafeDupablePerformIO)
 
 
 {-# INLINE bsLength #-}
 bsLength :: ByteString -> Int
 bsLength = BS.length
+
+{-# INLINE bsInternals #-}
+bsInternals :: ByteString -> (ForeignPtr Word8, Int, Int)
+bsInternals (BSI.PS fp offset len) = (fp, offset, len)
 
 {-# INLINE bsUnsafeCreate #-}
 bsUnsafeCreate :: Int -> (Ptr Word8 -> IO ()) -> ByteString
@@ -47,6 +66,14 @@ bswapW32 (W32# w#) = W32# (GB.narrow32Word# (GB.byteSwap32# w#))
 {-# INLINE bswapW64 #-}
 bswapW64 :: Word64 -> Word64
 bswapW64 (W64# w#) = W64# (GB.byteSwap64# w#)
+
+{-# INLINE left #-}
+left :: a -> Either a b
+left = Left
+
+{-# INLINE numLess #-}
+numLess :: Ord a => a -> a -> Bool
+numLess = (<)
 
 {-# INLINE numPlus #-}
 numPlus :: Num a => a -> a -> a
@@ -74,6 +101,10 @@ pokeAdvanceW32 = pokeAdvance
 {-# INLINE pokeAdvanceW64 #-}
 pokeAdvanceW64 :: Ptr Word8 -> Word64 -> IO (Ptr Word8)
 pokeAdvanceW64 = pokeAdvance
+
+{-# INLINE right #-}
+right :: b -> Either a b
+right = Right
 
 {-# INLINE unit #-}
 unit :: ()

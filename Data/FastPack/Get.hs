@@ -5,8 +5,6 @@ module Data.FastPack.Get
     , runFastUnpack
     ) where
 
-import           Data.ByteString (ByteString)
-
 import           Data.FastPack.TH
 import           Data.FastPack.Types
 
@@ -19,7 +17,7 @@ import           Language.Haskell.TH.Syntax
 
 data GetData
     = GetNum PackNumType
-    | GetBs Int ByteString
+    | GetBs Int
     deriving (Eq, Show)
 
 
@@ -57,8 +55,7 @@ peekGetData :: String -> Int -> GetData -> (Int, Exp)
 peekGetData pname offset getdata =
     case getdata of
         GetNum t -> (offset + sizePackNumType t, fmapEndian t (peekPtrE pname offset))
-        GetBs _ _ -> error "peekGetData: GetBs"
-        -- GetBs len _ -> (offset + len, wrapEndian t (peekByteStringE pname offset len))
+        GetBs len -> (offset + len, peekByteStringE pname offset len)
 
 
 fmapEndian :: PackNumType -> Exp -> Exp
@@ -84,7 +81,11 @@ sizePackNumType t =
         PackW64 {} -> 8
 
 
-
+peekByteStringE :: String -> Int -> Int -> Exp
+peekByteStringE pname offset len =
+    AppE (AppE (AppE funcE (mkVarE pname)) (mkLitIntE offset)) (mkLitIntE len)
+  where
+    funcE = mkVarE "Data.FastPack.Functions.peekByteString"
 
 
 peekPtrE :: String -> Int -> Exp

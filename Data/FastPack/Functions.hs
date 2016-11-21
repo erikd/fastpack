@@ -14,6 +14,7 @@ module Data.FastPack.Functions
     , numLess
     , numPlus
     , peek
+    , peekByteString
     , plusPtr
     , pokeAdvanceBS
     , pokeAdvanceW8
@@ -78,6 +79,13 @@ numLess = (<)
 {-# INLINE numPlus #-}
 numPlus :: Num a => a -> a -> a
 numPlus = (+)
+
+{-# INLINE peekByteString #-}
+peekByteString :: Ptr Word8 -> Int -> Int -> IO ByteString
+peekByteString srcptr offset len =
+    BSI.create len $ \ destptr ->
+        BSI.memcpy destptr (plusPtr srcptr offset) len
+
 
 {-# INLINE pokeAdvanceBS #-}
 pokeAdvanceBS :: Ptr Word8 -> ByteString -> IO (Ptr Word8)

@@ -14,6 +14,7 @@ import           Data.FastPack.Types
 
 import           Language.Haskell.TH.Syntax
 
+#include "MachDeps.h"
 
 mkConE :: String -> Exp
 mkConE = ConE . mkName

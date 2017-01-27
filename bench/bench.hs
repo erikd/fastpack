@@ -26,15 +26,16 @@ main =
                (uncurry baseline (head libraries))
                (mapM_ (uncurry comp) (tail libraries))
   where
-    (bws, bss) = genBenchData 100000
+    (bws, bss) = genBenchData 500000
 
 --------------------------------------------------------------------------------
 -- The benchmarks.
 
-data Library = Binary
-             | Cereal
-             | Packer
-             | FastPack
+data Library
+  = Binary
+  | Cereal
+  | Packer
+  | FastPack
   deriving (Eq, Ord, Show, Read, Enum, Bounded)
 
 libraries :: [(String, Library)]
@@ -68,9 +69,9 @@ instance PutGet 'FastPack where
   putBenchWord _ = FastPack.putBenchWord
   getBenchWord _ = FastPack.getBenchWord
 
-{-# NOINLINE sanityBenchWord #-}
-sanityBenchWord :: (PutGet l) => Proxy l -> BenchWord -> BenchWord
-sanityBenchWord p = getBenchWord p . putBenchWord p
+-- {-# NOINLINE sanityBenchWord #-}
+-- sanityBenchWord :: (PutGet l) => Proxy l -> BenchWord -> BenchWord
+-- sanityBenchWord p = getBenchWord p . putBenchWord p
 
 putBenchTest :: (BenchWord -> ByteString) -> [BenchWord] -> Int
 putBenchTest put = DL.foldl' (\ acc bw -> acc + BS.length (put bw)) 0

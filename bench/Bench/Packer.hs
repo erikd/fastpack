@@ -37,7 +37,3 @@ getBenchWord bs =
         <*> P.getWord16BE
         <*> P.getWord8
         <*> P.getWord8
-
-{-# NOINLINE sanityBenchWord #-}
-sanityBenchWord :: BenchWord -> BenchWord
-sanityBenchWord = getBenchWord . putBenchWord

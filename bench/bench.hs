@@ -68,6 +68,10 @@ instance PutGet 'FastPack where
   putBenchWord _ = FastPack.putBenchWord
   getBenchWord _ = FastPack.getBenchWord
 
+{-# NOINLINE sanityBenchWord #-}
+sanityBenchWord :: (PutGet l) => Proxy l -> BenchWord -> BenchWord
+sanityBenchWord p = getBenchWord p . putBenchWord p
+
 putBenchTest :: (BenchWord -> ByteString) -> [BenchWord] -> Int
 putBenchTest put = DL.foldl' (\ acc bw -> acc + BS.length (put bw)) 0
 

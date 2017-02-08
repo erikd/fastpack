@@ -41,3 +41,7 @@ getBenchWord bs =
         <*> CG.getWord16be
         <*> CG.getWord8
         <*> CG.getWord8
+
+{-# NOINLINE sanityBenchWord #-}
+sanityBenchWord :: BenchWord -> BenchWord
+sanityBenchWord = getBenchWord . putBenchWord

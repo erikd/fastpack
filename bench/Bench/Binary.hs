@@ -38,3 +38,7 @@ getBenchWord bs =
         <*> BG.getWord16be
         <*> BG.getWord8
         <*> BG.getWord8
+
+{-# NOINLINE sanityBenchWord #-}
+sanityBenchWord :: BenchWord -> BenchWord
+sanityBenchWord = getBenchWord . putBenchWord

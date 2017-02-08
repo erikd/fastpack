@@ -77,6 +77,6 @@ benchmark bench
                     , binary                          == 0.8.*
                     , bytestring
                     , cereal                          == 0.5.*
+                    , criterion                       >= 1.1.4     && < 1.2
                     , fastpack
                     , packer                          == 0.1.*
-                    , testbench                       == 0.1.*

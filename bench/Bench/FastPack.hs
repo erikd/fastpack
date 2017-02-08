@@ -50,3 +50,8 @@ getBenchWordRaw bs =
         , GetNum PackW8
         , GetNum PackW8
         ])
+
+
+{-# NOINLINE sanityBenchWord #-}
+sanityBenchWord :: BenchWord -> BenchWord
+sanityBenchWord = getBenchWord . putBenchWord

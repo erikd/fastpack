@@ -62,7 +62,6 @@ test-suite testsuite
                     , containers
                     , either
                     , hspec
-                    , megaparsec
 
 benchmark bench
   type:               exitcode-stdio-1.0

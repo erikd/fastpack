@@ -25,7 +25,7 @@ main = do
 
 benchmarks :: [C.Benchmark]
 benchmarks =
-    let (bws, bss) = genBenchData 100000 in
+    let (bws, bss) = genBenchData 500000 in
     [ C.bgroup "Write to ByteString"
         [ C.bench "Binary"      $ C.whnf (putBenchTest Binary.putBenchWord) bws
         , C.bench "Cereal"      $ C.whnf (putBenchTest Cereal.putBenchWord) bws

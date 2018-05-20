@@ -23,4 +23,4 @@ benchWordZero = BenchWord 0 0 0 0 0 0 0 0
 -- Used in benchmarking to force evaluation.
 {-# INLINE getThird #-}
 getThird :: BenchWord -> Word32
-getThird (BenchWord _ _ le32 _ _ _ _ _) = fromIntegral le32
+getThird (BenchWord _ _ le32 _ _ _ _ _) = le32

@@ -45,7 +45,7 @@ library
   build-depends:      base                          >= 4.8         && < 5.0
                     , bytestring                    >= 0.10
                     , containers                    == 0.5.*
-                    , either                        == 4.4.*
+                    , transformers-either           == 0.1.*
                     , memory                        >= 0.13        && < 0.15
                     , template-haskell
 
@@ -72,10 +72,17 @@ benchmark bench
 
   hs-source-dirs:     bench
 
+  other-modules:      Bench.Binary
+                      Bench.Cereal
+                      Bench.Data
+                      Bench.FastPack
+                      Bench.Packer
+                      Bench.Types
+
   build-depends:      base
                     , binary                          == 0.8.*
                     , bytestring
                     , cereal                          == 0.5.*
-                    , criterion                       >= 1.1.4     && < 1.2
+                    , criterion                       >= 1.1.4
                     , fastpack
                     , packer                          == 0.1.*
